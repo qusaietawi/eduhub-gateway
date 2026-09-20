@@ -103,7 +103,17 @@ export type PageRow = {
 };
 
 async function list<T>(table: string, order: string, ascending = true): Promise<T[]> {
-  const { data, error } = await supabase.from(table).select("*").order(order, { ascending });
+  const client = supabase as unknown as {
+    from: (t: string) => {
+      select: (c: string) => {
+        order: (
+          col: string,
+          opts: { ascending: boolean },
+        ) => Promise<{ data: unknown; error: { message: string } | null }>;
+      };
+    };
+  };
+  const { data, error } = await client.from(table).select("*").order(order, { ascending });
   if (error) throw new Error(error.message);
   return (data ?? []) as T[];
 }
