@@ -426,6 +426,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_permissions: {
+        Row: {
+          created_at: string
+          id: string
+          permission: Database["public"]["Enums"]["admin_permission"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          permission: Database["public"]["Enums"]["admin_permission"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          permission?: Database["public"]["Enums"]["admin_permission"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -452,6 +473,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage: {
+        Args: { _permission: Database["public"]["Enums"]["admin_permission"] }
+        Returns: boolean
+      }
+      has_permission: {
+        Args: {
+          _permission: Database["public"]["Enums"]["admin_permission"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -462,6 +494,7 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
+      admin_permission: "content" | "submissions" | "settings"
       app_role: "admin" | "editor" | "user"
     }
     CompositeTypes: {
@@ -590,6 +623,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      admin_permission: ["content", "submissions", "settings"],
       app_role: ["admin", "editor", "user"],
     },
   },
